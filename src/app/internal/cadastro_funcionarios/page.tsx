@@ -6,17 +6,26 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { useState } from 'react';
+import { Button, Drawer, FormControl, InputLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, SearchIconWrapper, StyledInputBase } from '@/app/components/toolbar_elements';
 
 export default function CadastroFuncionarios() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [numCracha, setNumCracha] = useState('');
+  const [funcao, setFuncao] = useState('');
+
+  useEffect(() => {
+    if (localStorage.getItem('token') == null) {
+      router.push('/');
+    }
+  }, []);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -65,6 +74,15 @@ export default function CadastroFuncionarios() {
     </Box>
   );
 
+  const validaCampos = (): boolean => {
+    return nome == null || email == null || telefone == null || numCracha == null;
+  }
+
+  const submit = () => {
+    router.push('/internal');
+  };
+
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" color='inherit'>
@@ -87,21 +105,63 @@ export default function CadastroFuncionarios() {
           >
             Cadastro de funcionarios
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
         </Toolbar>
       </AppBar>
 
       <Drawer open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
+
+      <Stack margin={'20px 0 0 0'} spacing={2} alignItems={'center'} marginX={'auto'} maxWidth={300} direction="column">
+        <TextField
+          required
+          id="outlined-required"
+          label="Nome"
+          className='toolbar-margin width-input'
+          value={nome || ""}
+          onChange={evento => setNome(evento.target.value)}
+        />
+        <TextField
+          required
+          id="outlined-required"
+          label="Email"
+          className='toolbar-margin  width-input'
+          value={email || ""}
+          onChange={evento => setEmail(evento.target.value)}
+        />
+        <TextField
+          required
+          id="outlined-required"
+          label="Telefone"
+          className='toolbar-margin width-input'
+          value={telefone || ""}
+          onChange={evento => setTelefone(evento.target.value)}
+        />
+        <TextField
+          required
+          id="outlined-required"
+          label="Número de crachá"
+          className='toolbar-margin  width-input'
+          value={numCracha || ""}
+          onChange={evento => setNumCracha(evento.target.value)}
+        />
+
+        <FormControl className=' width-input'>
+          <InputLabel id="select-label">Tipo de funcionário</InputLabel>
+          <Select
+            labelId="select-label"
+            id="select"
+            value={funcao}
+            label="Tipo de funcionário"
+            onChange={(event) => setFuncao(event.target.value)}
+          >
+            <MenuItem value={'medico'}>Médico</MenuItem>
+            <MenuItem value={'funcionario'}>Funcionário</MenuItem>
+          </Select>
+        </FormControl>
+
+        <Button color='inherit' disabled={validaCampos()} className='toolbar-margin' variant="contained" onClick={() => submit()}>Salvar</Button>
+      </Stack>
     </Box>
   );
 }

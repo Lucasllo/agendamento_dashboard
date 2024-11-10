@@ -10,7 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { Checkbox, Drawer, FormControlLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, SearchIconWrapper, StyledInputBase } from '@/app/components/toolbar_elements';
 import { Accordion, AccordionDetails, AccordionSummary } from '@/app/components/accordion_elements';
@@ -21,6 +21,93 @@ export default function Agendamentos() {
   const [open, setOpen] = useState(false);
 
   const [expanded, setExpanded] = useState<string | false>('paciente1');
+  const [agendamentos, setAgendamentos] = useState<{
+    paciente: {
+      name: string;
+      id: string;
+      cpf: string;
+      email: string;
+      dataNascimento: string;
+    };
+    agendamento: {
+      id: string,
+      medico: string;
+      horario: string;
+      data: string;
+      compareceu: boolean;
+      isPago: boolean;
+      valor: string;
+    }
+  }[]>([
+    {
+      paciente: {
+        name: 'Larissa Evangelista Moreira',
+        id: '1',
+        cpf: '123.456.789-55',
+        email: 'larissa@mail.com',
+        dataNascimento: '11/11/2005'
+      },
+      agendamento: {
+        id: '1',
+        medico: 'Dr. David',
+        horario: '21:00',
+        data: '15/10/2024',
+        compareceu: false,
+        isPago: false,
+        valor: '150'
+      }
+    },
+    {
+      paciente: {
+        name: 'Allan Kevem',
+        id: '2',
+        cpf: '123.456.789-55',
+        email: 'allan@mail.com',
+        dataNascimento: '07/01/2000'
+      },
+      agendamento: {
+        id: '2',
+        medico: 'Dr. Carlos',
+        horario: '12:00',
+        data: '05/07/2024',
+        compareceu: true,
+        isPago: true,
+        valor: '350'
+      }
+    },
+    {
+      paciente: {
+        name: 'Leandro',
+        id: '3',
+        cpf: '123.456.789-55',
+        email: 'leandro@mail.com',
+        dataNascimento: '08/04/1980'
+      },
+      agendamento: {
+        id: '3',
+        medico: 'Dr. Andre',
+        horario: '08:00',
+        data: '07/07/2024',
+        compareceu: true,
+        isPago: false,
+        valor: '250'
+      }
+    }
+  ]);
+
+  const [buscar, setBuscar] = useState("");
+
+  const [lista, setLista] = useState(agendamentos);
+
+  function testaBusca(nome: string) {
+    const regex = new RegExp(buscar, 'i');
+    return regex.test(nome);
+  }
+
+  useEffect(() => {
+    const novaLista = agendamentos.filter(item => testaBusca(item.paciente.name))
+    setLista(novaLista);
+  }, [buscar, agendamentos])
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -69,60 +156,57 @@ export default function Agendamentos() {
     </Box>
   );
 
-
-  const agendamentos = [
-    {
-      paciente: {
-        name: 'Larissa Evangelista Moreira',
-        id: '1',
-        cpf: '123.456.789-55',
-        email: 'larissa@mail.com',
-        dataNascimento: '11/11/2005'
-      },
-      agendamento: {
-        medico: 'Dr. David',
-        horario: '21:00',
-        data: '15/10/2024',
-        compareceu: false,
-        isPago: false,
-        valor: '150'
-      }
-    },
-    {
-      paciente: {
-        name: 'Allan Kevem',
-        id: '2',
-        cpf: '123.456.789-55',
-        email: 'allan@mail.com',
-        dataNascimento: '07/01/2000'
-      },
-      agendamento: {
-        medico: 'Dr. Carlos',
-        horario: '12:00',
-        data: '05/07/2024',
-        compareceu: true,
-        isPago: true,
-        valor: '350'
-      }
-    },
-    {
-      paciente: {
-        name: 'Leandro',
-        id: '3',
-        cpf: '123.456.789-55',
-        email: 'leandro@mail.com',
-        dataNascimento: '08/04/1980'
-      },
-      agendamento: {
-        medico: 'Dr. Andre',
-        horario: '08:00',
-        data: '07/07/2024',
-        compareceu: true,
-        isPago: false,
-        valor: '250'
-      }
+  const updateIsPago = (ag: {
+    paciente: {
+      name: string;
+      id: string;
+      cpf: string;
+      email: string;
+      dataNascimento: string;
+    };
+    agendamento: {
+      id: string,
+      medico: string;
+      horario: string;
+      data: string;
+      compareceu: boolean;
+      isPago: boolean;
+      valor: string;
     }
-  ]
+  }) => {
+    const updateAgendamentos = agendamentos.map(
+      (agend) => agend.agendamento.id === ag.agendamento.id ?
+        { ...agend, agendamento: { ...agend.agendamento, isPago: !ag.agendamento.isPago } } :
+        agend
+    )
+    setAgendamentos(updateAgendamentos);
+  };
+
+  const updateCompareceu = (ag: {
+    paciente: {
+      name: string;
+      id: string;
+      cpf: string;
+      email: string;
+      dataNascimento: string;
+    };
+    agendamento: {
+      id: string,
+      medico: string;
+      horario: string;
+      data: string;
+      compareceu: boolean;
+      isPago: boolean;
+      valor: string;
+    }
+  }) => {
+    const updateAgendamentos = agendamentos.map(
+      (agend) => agend.agendamento.id === ag.agendamento.id ?
+        { ...agend, agendamento: { ...agend.agendamento, compareceu: !ag.agendamento.compareceu } } :
+        agend
+    )
+    setAgendamentos(updateAgendamentos);
+  };
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -158,6 +242,7 @@ export default function Agendamentos() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
+              value={buscar} onChange={evento => setBuscar(evento.target.value)}
             />
           </Search>
         </Toolbar>
@@ -167,24 +252,24 @@ export default function Agendamentos() {
         {DrawerList}
       </Drawer>
 
-      {agendamentos.map((agendamento) => {
+      {lista.map((agend) => {
         return (
-          <Accordion key={agendamento.paciente.id} className='toolbar-margin' expanded={expanded === `paciente${agendamento.paciente.id}`} onChange={handleChange(`paciente${agendamento.paciente.id}`)}>
+          <Accordion key={agend.paciente.id} className='toolbar-margin' expanded={expanded === `paciente${agend.paciente.id}`} onChange={handleChange(`paciente${agend.paciente.id}`)}>
             <AccordionSummary>
-              <Typography>{agendamento.paciente.name + ' - ' + agendamento.paciente.cpf}</Typography>
+              <Typography>{agend.paciente.name + ' - ' + agend.paciente.cpf}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <FormControlLabel control={<Checkbox checked={agendamento.agendamento.compareceu} />} label="Compareceu a consulta" />
+              <FormControlLabel control={<Checkbox checked={agend.agendamento.compareceu} onClick={() => updateCompareceu(agend)} />} label="Compareceu a consulta" />
               <Typography paddingLeft={'33px'}>
-                Data: {agendamento.agendamento.data}
+                Data: {agend.agendamento.data}
                 <br />
-                Médico: {agendamento.agendamento.medico}
+                Médico: {agend.agendamento.medico}
                 <br />
-                Horário: {agendamento.agendamento.horario}
+                Horário: {agend.agendamento.horario}
               </Typography>
-              <FormControlLabel control={<Checkbox checked={agendamento.agendamento.isPago} />} label="Consulta paga" />
+              <FormControlLabel control={<Checkbox checked={agend.agendamento.isPago} onClick={() => updateIsPago(agend)} />} label="Consulta paga" />
               <Typography paddingLeft={'33px'}>
-                Valor da especialidade: R$ {agendamento.agendamento.valor}
+                Valor da especialidade: R$ {agend.agendamento.valor}
               </Typography>
             </AccordionDetails>
           </Accordion>

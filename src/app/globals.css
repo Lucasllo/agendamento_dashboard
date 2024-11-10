@@ -46,3 +46,7 @@ a {
 .toolbar-margin{
   margin: 0 210px 0 210px;
 }
+
+.width-input{
+  width: 500px;
+}

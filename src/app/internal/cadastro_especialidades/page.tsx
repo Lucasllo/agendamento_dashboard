@@ -6,17 +6,27 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { useState } from 'react';
+import { Button, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, TextField } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, SearchIconWrapper, StyledInputBase } from '@/app/components/toolbar_elements';
 
 export default function CadastroEspecialidades() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [especialidade, setEspecialidade] = useState("");
+  const [preco, setPreco] = useState("");
+
+  const validaCampos = (): boolean => {
+    return especialidade == null || preco == null;
+  }
+
+  useEffect(() => {
+    if (localStorage.getItem('token') == null) {
+      router.push('/');
+    }
+  }, []);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -46,6 +56,10 @@ export default function CadastroEspecialidades() {
     }
 
     setOpen(!open);
+  };
+
+  const submit = () => {
+    router.push('/internal');
   };
 
   const DrawerList = (
@@ -87,21 +101,33 @@ export default function CadastroEspecialidades() {
           >
             Cadastro de especialidades
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
         </Toolbar>
       </AppBar>
 
       <Drawer open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
+
+      <Stack margin={'20px 0 0 0'} spacing={2} alignItems={'center'} marginX={'auto'} maxWidth={300} direction="column">
+        <TextField
+          required
+          id="outlined-required"
+          label="Nome da especialidade"
+          className='toolbar-margin width-input'
+          value={especialidade || ""}
+          onChange={evento => setEspecialidade(evento.target.value)}
+        />
+        <TextField
+          required
+          id="outlined-required"
+          label="Preço"
+          className='toolbar-margin'
+          value={preco || ""}
+          onChange={evento => setPreco(evento.target.value)}
+        />
+
+        <Button color='inherit' disabled={validaCampos()} className='toolbar-margin' variant="contained" onClick={() => submit()}>Salvar</Button>
+      </Stack>
     </Box>
   );
 }

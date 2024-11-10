@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "agendamento_dashboard",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,7 +14,7 @@
     "@mui/icons-material": "^6.1.6",
     "@mui/material": "^6.1.6",
     "@toolpad/studio": "^0.9.0",
-    "my-app": "file:",
+    "agendamento_dashboard": "file:",
     "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18"
