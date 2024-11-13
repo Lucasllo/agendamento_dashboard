@@ -20,7 +20,7 @@ export default function CadastroEspecialidades() {
   const [preco, setPreco] = useState("");
 
   const validaCampos = (): boolean => {
-    return especialidade != null || preco != null;
+    return especialidade == '' || preco == '';
   }
 
   useEffect(() => {

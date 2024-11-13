@@ -82,7 +82,7 @@ export default function CadastroFuncionarios() {
   );
 
   const validaCampos = (): boolean => {
-    return nome != null || email != null || telefone != null || numCracha != null;
+    return nome == '' || email == '' || telefone == '' || numCracha == '';
   }
 
   const submit = () => {
