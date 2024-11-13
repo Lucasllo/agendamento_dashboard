@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { Button, Drawer, FormControl, InputLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -46,11 +47,17 @@ export default function CadastroFuncionarios() {
       case 'Agendamentos':
         redirectPage = 'internal';
         break;
+      case 'Sair':
+          redirectPage = 'Sair';
+          break;
       default:
         redirectPage = '';
     }
 
-    if (redirectPage != '') {
+    if(redirectPage == 'Sair'){
+      localStorage.removeItem('token');
+      router.push(`/`);
+    }else if (redirectPage != '') {
       router.push(`/${redirectPage}`);
     }
 
@@ -60,11 +67,11 @@ export default function CadastroFuncionarios() {
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation">
       <List>
-        {['Agendamentos', 'Cadastro de funcionarios', 'Cadastro de especialidades', 'Cadastro de datas'].map((text) => (
+        {['Agendamentos', 'Cadastro de funcionarios', 'Cadastro de especialidades', 'Cadastro de datas', 'Sair'].map((text) => (
           <ListItem key={text} disablePadding onClick={changePage(text)}>
             <ListItemButton>
               <ListItemIcon>
-                {text == 'Agendamentos' ? <ArrowRightIcon /> : <AddIcon />}
+                {text == 'Agendamentos' ? <ArrowRightIcon /> : text == 'Sair' ? <LogoutIcon/> : <AddIcon />}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
@@ -75,7 +82,7 @@ export default function CadastroFuncionarios() {
   );
 
   const validaCampos = (): boolean => {
-    return nome == null || email == null || telefone == null || numCracha == null;
+    return nome != null || email != null || telefone != null || numCracha != null;
   }
 
   const submit = () => {

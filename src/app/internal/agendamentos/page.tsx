@@ -9,6 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { Checkbox, Drawer, FormControlLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -128,11 +129,17 @@ export default function Agendamentos() {
       case 'Agendamentos':
         redirectPage = 'internal';
         break;
+      case 'Sair':
+          redirectPage = 'Sair';
+          break;
       default:
         redirectPage = '';
     }
 
-    if (redirectPage != '') {
+    if(redirectPage == 'Sair'){
+      localStorage.removeItem('token');
+      router.push(`/`);
+    }else if (redirectPage != '') {
       router.push(`/${redirectPage}`);
     }
 
@@ -142,11 +149,11 @@ export default function Agendamentos() {
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation">
       <List>
-        {['Agendamentos', 'Cadastro de funcionarios', 'Cadastro de especialidades', 'Cadastro de datas'].map((text) => (
+        {['Agendamentos', 'Cadastro de funcionarios', 'Cadastro de especialidades', 'Cadastro de datas', 'Sair'].map((text) => (
           <ListItem key={text} disablePadding onClick={changePage(text)}>
             <ListItemButton>
               <ListItemIcon>
-                {text == 'Agendamentos' ? <ArrowRightIcon /> : <AddIcon />}
+                {text == 'Agendamentos' ? <ArrowRightIcon /> : text == 'Sair' ? <LogoutIcon/> : <AddIcon />}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
